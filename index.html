@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HYPERSPACE RUSH - Ultimate Racing Experience</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.7.0/fonts/remixicon.css" rel="stylesheet"/>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="style.css">
+    
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.161/build/three.module.js",
+          "jsm/": "https://cdn.jsdelivr.net/npm/three@0.161/examples/jsm/"
+        }
+      }
+    </script>
+</head>
+<body>
+    <!-- Quick Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <h1 class="loading-title">HYPERSPACE RUSH</h1>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+            <p class="loading-text" id="loadingText">LOADING...</p>
+        </div>
+    </div>
+
+    <!-- Streamlined Start Screen -->
+    <div id="startScreen" class="start-screen">
+        <div class="cosmic-bg"></div>
+        
+        <div class="start-content">
+            <h1 class="game-title">HYPERSPACE<br>RUSH</h1>
+            
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value" id="highScoreDisplay">0</div>
+                    <div class="stat-label">HIGH SCORE</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="bestLevelDisplay">1</div>
+                    <div class="stat-label">BEST LEVEL</div>
+                </div>
+            </div>
+
+            <button id="startBtn" class="start-btn">
+                <span>START GAME</span>
+            </button>
+
+            <div class="controls-guide">
+                <div class="control-item">
+                    <kbd>WASD</kbd> or <kbd>ARROWS</kbd> <span>Move</span>
+                </div>
+                <div class="control-item">
+                    <kbd>SPACE</kbd> <span>Boost</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simplified HUD -->
+    <div id="hud" class="hud">
+        <div class="hud-top">
+            <div class="hud-item">
+                <div class="hud-label">SCORE</div>
+                <div class="hud-value" id="scoreValue">0</div>
+            </div>
+            
+            <div class="hud-item center">
+                <div class="hud-label">LEVEL</div>
+                <div class="hud-value" id="levelValue">1</div>
+            </div>
+
+            <div class="hud-item">
+                <div class="hud-label">HEALTH</div>
+                <div class="health-display">
+                    <div class="health-bar" id="healthBar1"></div>
+                    <div class="health-bar" id="healthBar2"></div>
+                    <div class="health-bar" id="healthBar3"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hud-bottom">
+            <div class="boost-container">
+                <div class="boost-label">BOOST</div>
+                <div class="boost-bar-bg">
+                    <div class="boost-bar" id="boostBar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Controls -->
+    <div id="mobileControls" class="mobile-controls">
+        <div class="joystick-area" id="joystickArea">
+            <div class="joystick" id="joystick"></div>
+        </div>
+        <button class="boost-btn" id="mobileBoost">BOOST</button>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameOver" class="game-over-screen">
+        <div class="game-over-content">
+            <h1 class="game-over-title">GAME OVER</h1>
+            
+            <div class="final-stats">
+                <div class="final-stat main">
+                    <div class="final-label">SCORE</div>
+                    <div class="final-value" id="finalScore">0</div>
+                </div>
+                
+                <div class="final-stat">
+                    <div class="final-label">HIGH SCORE</div>
+                    <div class="final-value" id="finalHighScore">0</div>
+                </div>
+
+                <div class="final-stat">
+                    <div class="final-label">LEVEL</div>
+                    <div class="final-value" id="finalLevel">1</div>
+                </div>
+            </div>
+
+            <div class="game-over-actions">
+                <button id="restartBtn" class="game-btn primary">PLAY AGAIN</button>
+                <button id="mainMenuBtn" class="game-btn secondary">MENU</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script type="module" src="spline.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>
