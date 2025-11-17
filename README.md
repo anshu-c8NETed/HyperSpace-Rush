@@ -1,333 +1,291 @@
 # 🚀 HYPERSPACE RUSH
 
-<div align="center">
+An immersive 3D racing game built with Three.js featuring a neon-lit tunnel, dynamic obstacles, collectibles, and progressive difficulty levels.
 
-![Hyperspace Rush Banner](https://img.shields.io/badge/HYPERSPACE-RUSH-00ffff?style=for-the-badge&logo=spacex&logoColor=white)
-
-**An immersive 3D endless runner racing game built with Three.js**
-
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Three.js](https://img.shields.io/badge/Three.js-r161-black.svg)](https://threejs.org/)
-[![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![Mobile](https://img.shields.io/badge/mobile-optimized-ff00ff.svg)]()
-
-[🎮 Play Now](#installation) • [📖 Documentation](#documentation) • [🤝 Contributing](#contributing)
-
-</div>
+![Hyperspace Rush](https://img.shields.io/badge/Game-Hyperspace%20Rush-cyan?style=for-the-badge)
+![Three.js](https://img.shields.io/badge/Three.js-0.161-black?style=for-the-badge&logo=three.js)
+![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
 
 ---
 
-## ✨ Features
+## 🎮 **Game Overview**
 
-### 🎮 Gameplay
-- **Endless Racing** - Navigate through a futuristic tunnel at breakneck speeds
-- **Progressive Difficulty** - Levels get harder as you advance
-- **Boost System** - Strategic nitro boost for speed bursts
-- **Health System** - 3 lives with invulnerability frames
-- **Score Tracking** - High score persistence with localStorage
+**Hyperspace Rush** is a fast-paced, endless tunnel racing game where players navigate through a procedurally generated spline-based track. Dodge red obstacles, collect green gems, and survive as long as possible while the difficulty increases with each level!
 
-### 🎨 Visuals
-- **Stunning 3D Graphics** - Powered by Three.js and WebGL
-- **Post-Processing Effects** - Bloom, motion blur, and cinematic rendering
-- **Dynamic Lighting** - Real-time color-shifting neon aesthetic
-- **Particle Systems** - 800+ animated particles for immersion
-- **Smooth Animations** - GSAP-powered transitions
+### ✨ **Key Features**
 
-### 📱 Cross-Platform
-- **Fully Responsive** - Works on desktop, tablet, and mobile
-- **Touch Controls** - Virtual joystick and touch buttons
-- **Keyboard Support** - WASD/Arrow keys + Space for boost
-- **Auto-Detection** - Automatically adapts to your device
-- **Performance Optimized** - 60 FPS on modern devices
-
-### 🎯 User Experience
-- **Instant Loading** - Optimized asset loading
-- **Clean UI/UX** - Minimalist HUD with essential info
-- **Smooth Controls** - Responsive movement with acceleration
-- **Visual Feedback** - Screen shake, flashes, and effects
-- **Persistent Stats** - Track your best scores and levels
+- 🌌 **Stunning 3D Graphics**: Built with Three.js and post-processing effects (Bloom)
+- 🎯 **Dynamic Gameplay**: Progressive difficulty with increasing speed and obstacles
+- 💎 **Collectibles System**: Green gems worth +50 points each
+- ❤️ **Health System**: 3 lives with invulnerability frames after damage
+- ⚡ **Boost Mechanic**: Rechargeable turbo boost for speed bursts
+- 📱 **Mobile Friendly**: Touch controls with virtual joystick and boost button
+- 🎨 **Cyberpunk Aesthetic**: Neon colors, glowing effects, and futuristic UI
+- 💾 **Progress Tracking**: High score and best level saved to localStorage
+- 🎵 **Smooth Animations**: GSAP-powered transitions and effects
 
 ---
 
-## 🎬 Screenshots
+## 🎯 **How to Play**
 
-| Menu | Gameplay | Game Over |
-|------|----------|-----------|
-| ![Menu](screenshot-menu.png) | ![Gameplay](screenshot-game.png) | ![Game Over](screenshot-gameover.png) |
+### **Objective**
+- Race through the endless tunnel
+- Survive as long as possible
+- Collect green gems for bonus points
+- Avoid red obstacles that damage your ship
+- Progress through levels by earning points
+
+### **Controls**
+
+#### **Desktop:**
+- **WASD** or **Arrow Keys** - Move ship in all directions
+- **SPACE** - Activate turbo boost
+
+#### **Mobile:**
+- **Virtual Joystick** (left side) - Navigate the ship
+- **BOOST Button** (right side) - Activate turbo boost
+
+### **Scoring System**
+- **Base Score**: +10 points per second
+- **Green Gems**: +50 points each
+- **Level Up**: Every 150 points = new level
+- **Speed Multiplier**: Score multiplied during boost
 
 ---
 
-## 🚀 Quick Start
+## 🛠️ **Installation & Setup**
 
-### Installation
+### **Prerequisites**
+- A modern web browser (Chrome, Firefox, Safari, Edge)
+- No additional installations required!
 
-1. **Clone the repository**
+### **Quick Start**
+
+1. **Clone the repository:**
 ```bash
 git clone https://github.com/yourusername/hyperspace-rush.git
 cd hyperspace-rush
 ```
 
-2. **Serve locally**
+2. **Open the game:**
+   - Simply open `index.html` in your web browser
+   - Or use a local server (recommended):
+
 ```bash
 # Using Python 3
 python -m http.server 8000
 
-# Using Node.js
-npx serve
+# Using Node.js (http-server)
+npx http-server
 
-# Using PHP
-php -S localhost:8000
+# Using VS Code Live Server extension
+# Right-click index.html > Open with Live Server
 ```
 
-3. **Open in browser**
-```
-http://localhost:8000
-```
+3. **Play the game:**
+   - Navigate to `http://localhost:8000` (or your local server URL)
+   - Click "HOW TO PLAY" to view instructions
+   - Click "START GAME" and enjoy!
 
-### File Structure
+---
+
+## 📁 **Project Structure**
+
 ```
 hyperspace-rush/
-├── index.html          # Main HTML file
-├── main.js            # Game logic and Three.js setup
-├── spline.js          # Racing track geometry
-├── style.css          # Responsive styling
-├── README.md          # This file
-└── LICENSE            # MIT License
+├── index.html          # Main HTML file with game structure
+├── style.css           # All styles including responsive design
+├── main.js             # Core game logic and mechanics
+├── spline.js           # Racing track spline generation
+└── README.md           # Project documentation
 ```
+
+### **File Descriptions**
+
+- **`index.html`**: 
+  - Game UI screens (loading, instructions, start menu, HUD, game over)
+  - CDN imports for Three.js, GSAP, Remix Icons
+  - Canvas rendering area
+
+- **`style.css`**: 
+  - Cyberpunk-themed styling with neon colors
+  - Responsive design for mobile/tablet/desktop
+  - Animations and hover effects
+  - Custom button designs
+
+- **`main.js`**: 
+  - Three.js scene setup and rendering
+  - Game state management
+  - Player movement and collision detection
+  - Obstacle and collectible spawning
+  - Boost system and scoring logic
+
+- **`spline.js`**: 
+  - Catmull-Rom spline curve generation
+  - Racing track path definition with elevation changes
+  - Realistic corner banking and curves
 
 ---
 
-## 🎮 Controls
+## 🎨 **Technologies Used**
 
-### Desktop
-| Key | Action |
-|-----|--------|
-| `W` / `↑` | Move Up |
-| `S` / `↓` | Move Down |
-| `A` / `←` | Move Left |
-| `D` / `→` | Move Right |
-| `SPACE` | Activate Boost |
-
-### Mobile
-- **Virtual Joystick** (bottom-left) - Movement in all directions
-- **BOOST Button** (bottom-right) - Nitro speed burst
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **Three.js** | 0.161 | 3D rendering and scene management |
+| **GSAP** | 3.12.5 | Smooth animations and transitions |
+| **Post-processing** | - | Bloom effects for neon glow |
+| **Remix Icons** | 4.7.0 | UI icons |
+| **Google Fonts** | - | Orbitron & Rajdhani fonts |
+| **Vanilla JavaScript** | ES6+ | Core game logic |
+| **CSS3** | - | Styling and animations |
 
 ---
 
-## 🛠️ Technical Details
+## 🎮 **Game Mechanics**
 
-### Technologies Used
-- **Three.js r161** - 3D graphics rendering
-- **GSAP 3.12** - Animation library
-- **WebGL** - Hardware-accelerated rendering
-- **ES6 Modules** - Modern JavaScript
-- **CSS3** - Responsive design
-- **HTML5** - Semantic markup
-
-### Key Components
-
-#### 🎮 Game Loop
-```javascript
-// 60 FPS game loop with delta timing
-function animate() {
-    requestAnimationFrame(animate);
-    const delta = clock.getDelta();
-    
-    if (gameState.isPlaying) {
-        updateCamera(delta);
-        checkCollisions();
-        updateHUD();
-    }
-    
-    composer.render();
-}
-```
-
-#### 🌊 Track Generation
-```javascript
-// Procedural racing track using Catmull-Rom spline
-const spline = new THREE.CatmullRomCurve3(points, true, "catmullrom", 0.5);
-const tubeGeo = new THREE.TubeGeometry(spline, 300, 0.65, 16, true);
-```
-
-#### 💥 Post-Processing
-```javascript
-// Bloom effect for neon glow
-const bloomPass = new UnrealBloomPass(
-    new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1.5,  // strength
-    0.4,  // radius
-    0.85  // threshold
-);
-```
-
-### Performance Optimization
-- ✅ Object pooling for obstacles (no garbage collection)
-- ✅ Reduced particle count on mobile (800 vs 1200)
-- ✅ Conditional antialiasing (desktop only)
-- ✅ Efficient collision detection (squared distance)
-- ✅ RequestAnimationFrame for smooth rendering
-- ✅ Texture compression and reuse
-
----
-
-## 📊 Game Mechanics
-
-### Difficulty Scaling
-```javascript
-Level 1:  15 obstacles @ 2.0x speed
-Level 5:  35 obstacles @ 2.6x speed
-Level 10: 60 obstacles @ 3.2x speed (capped)
-```
-
-### Scoring System
-- **Base Score**: 20 points/second
-- **Boost Multiplier**: 2.0x during nitro
+### **Difficulty Progression**
+- **Base Speed**: 2.0 units/second
+- **Speed Increase**: +0.15 per level
+- **Obstacles**: Start at 5, +2 per level (max 50)
 - **Level Threshold**: 150 points per level
 
-### Health System
-- **3 Lives** (3 health bars)
-- **1 Second Invulnerability** after taking damage
-- **Visual Feedback**: Screen shake + red flash
+### **Power-ups**
+- **Boost Power**: 2x speed multiplier
+- **Boost Duration**: 1.5 seconds
+- **Boost Recharge**: 15% per second
+- **Minimum Charge**: 30% to activate
+
+### **Health System**
+- **Max Health**: 3 lives (hearts)
+- **Invulnerability**: 1 second after taking damage
 - **Game Over**: When health reaches 0
 
----
-
-## 🎨 Customization
-
-### Modify Game Difficulty
-Edit `CONFIG` object in `main.js`:
-```javascript
-const CONFIG = {
-    baseSpeed: 2.0,              // Starting speed
-    obstacleBaseCount: 15,        // Initial obstacles
-    boostPower: 2.0,             // Boost multiplier
-    levelScoreThreshold: 150,    // Points per level
-    // ... more settings
-};
-```
-
-### Change Color Scheme
-Modify CSS variables in `style.css`:
-```css
-:root {
-    --cyan: #00ffff;      /* Primary color */
-    --magenta: #ff00ff;   /* Secondary color */
-    --yellow: #ffff00;    /* Accent color */
-}
-```
-
-### Adjust Track Layout
-Edit control points in `spline.js`:
-```javascript
-const curvePath = [
-    15.0, 0.0, 0.0,   // [x, y, z] coordinates
-    12.0, 0.0, 0.0,
-    // ... add more points
-];
-```
+### **Collectibles**
+- **Green Gems**: Spawn 8 per level refresh
+- **Point Value**: +50 points each
+- **Respawn**: New set spawns on level up
 
 ---
 
-## 🐛 Known Issues
+## 🎨 **Visual Features**
 
-- [ ] Safari mobile may have reduced performance on older devices
-- [ ] Orientation lock may not work on all browsers
-- [ ] High DPI displays may see slight blur on text
+- **Particle System**: 800 animated particles for depth
+- **Bloom Effect**: Glowing neon aesthetic
+- **Fog System**: Dynamic depth perception
+- **Wireframe Tunnel**: Color-shifting edges
+- **Dynamic Lighting**: 3 light sources (ambient, directional, point)
+- **Smooth Camera**: Follows spline path with offset movement
+- **Responsive Design**: Adapts to all screen sizes
 
 ---
 
-## 🚀 Roadmap
+## 📱 **Mobile Optimization**
 
-### Version 1.1 (Planned)
-- [ ] Power-ups (shields, score multipliers)
-- [ ] Multiple track variations
-- [ ] Sound effects and music
-- [ ] Leaderboard integration
-- [ ] More visual effects (trails, explosions)
+- Virtual joystick for movement control
+- Touch-optimized boost button
+- Reduced particle count on mobile
+- Optimized rendering with `powerPreference: "high-performance"`
+- Pixel ratio capping at 2x for performance
+- Conditional antialiasing based on device
 
-### Version 1.2 (Future)
+---
+
+## 🏆 **Scoring & Progression**
+
+### **Score Breakdown**
+```
+Base Score: 10 pts/sec × Speed Multiplier
+Green Gem: 50 pts (instant)
+Level Up: Every 150 points
+```
+
+### **Persistent Data**
+- High Score (saved to localStorage)
+- Best Level Reached (saved to localStorage)
+- Displayed on start screen and game over
+
+---
+
+## 🐛 **Known Issues & Limitations**
+
+- Some older mobile devices may experience lower frame rates
+- Safari on iOS may have reduced particle effects
+- Touch devices don't support keyboard controls
+
+---
+
+## 🚀 **Future Enhancements**
+
+Potential features for future versions:
+
+- [ ] Multiple ship designs to choose from
+- [ ] Power-up variety (shield, slow-motion, magnet)
+- [ ] Leaderboard system
+- [ ] Sound effects and background music
+- [ ] Different tunnel themes/environments
 - [ ] Multiplayer race mode
+- [ ] Achievement system
 - [ ] Daily challenges
-- [ ] Unlockable ships/skins
-- [ ] Progressive Web App (PWA)
-- [ ] Social sharing
 
 ---
 
-## 🤝 Contributing
+## 🤝 **Contributing**
 
 Contributions are welcome! Here's how you can help:
 
 1. **Fork the repository**
-2. **Create your feature branch**
-   ```bash
-   git checkout -b feature/AmazingFeature
-   ```
-3. **Commit your changes**
-   ```bash
-   git commit -m 'Add some AmazingFeature'
-   ```
-4. **Push to the branch**
-   ```bash
-   git push origin feature/AmazingFeature
-   ```
+2. **Create a feature branch** (`git checkout -b feature/AmazingFeature`)
+3. **Commit your changes** (`git commit -m 'Add some AmazingFeature'`)
+4. **Push to the branch** (`git push origin feature/AmazingFeature`)
 5. **Open a Pull Request**
 
-### Development Guidelines
+### **Development Guidelines**
 - Follow existing code style
-- Test on multiple devices
-- Update documentation
-- Keep commits atomic and descriptive
+- Test on multiple browsers and devices
+- Update README if adding new features
+- Keep performance in mind for mobile devices
 
 ---
 
-## 📝 License
+## 📄 **License**
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
-```
-MIT License
-
-Copyright (c) 2024 Hyperspace Rush
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
+This project is licensed under the MIT License - feel free to use, modify, and distribute as you wish.
 
 ---
 
-## 🙏 Acknowledgments
+## 👨‍💻 **Author**
+
+Created with ❤️ by AN$HU
+
+---
+
+## 🙏 **Acknowledgments**
 
 - **Three.js** - Amazing 3D library
-- **GSAP** - Smooth animations
-- **RemixIcon** - Beautiful icons
-- **Google Fonts** - Orbitron & Rajdhani fonts
-- Inspired by classic racing games like F-Zero and Wipeout
+- **GSAP** - Smooth animation library
+- **Remix Icon** - Beautiful icon set
+- Inspired by classic tunnel racing games and cyberpunk aesthetics
 
 ---
 
-## 📧 Contact
+## 📞 **Support**
 
-**Project Maintainer** - [@yourusername](https://github.com/yourusername)
-
-**Project Link** - [https://github.com/yourusername/hyperspace-rush](https://github.com/yourusername/hyperspace-rush)
+If you encounter any issues or have questions:
+- Open an issue on GitHub
+- Check existing issues for solutions
+- Read the game instructions in-app
 
 ---
 
-<div align="center">
+## 🌟 **Show Your Support**
 
-### ⭐ Star this repo if you enjoyed the game!
+If you enjoyed this game, please consider:
+- ⭐ Starring the repository
+- 🍴 Forking and creating your own version
+- 📢 Sharing with friends and fellow developers
 
-Made with ❤️ and ☕ by passionate developers
+---
 
-[Report Bug](https://github.com/yourusername/hyperspace-rush/issues) • [Request Feature](https://github.com/yourusername/hyperspace-rush/issues)
+**Happy Racing! 🏁💨**
 
-</div>
+*May your reflexes be quick and your scores be high!*
