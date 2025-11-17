@@ -1,4 +1,3 @@
-
 import * as THREE from "three";
 import { EffectComposer } from "jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "jsm/postprocessing/RenderPass.js";
@@ -21,6 +20,9 @@ const CONFIG = {
     obstacleIncrementPerLevel: 2,
     obstacleMaxCount: 50,
     obstacleSize: 0.08,
+    collectibleSize: 0.1,
+    collectibleCount: 8,
+    collectibleScoreValue: 50,
     particleCount: 800,
     boostPower: 2.0,
     boostDuration: 1500,
@@ -56,8 +58,11 @@ const el = {
     loadingScreen: document.getElementById('loadingScreen'),
     loadingProgress: document.getElementById('loadingProgress'),
     loadingText: document.getElementById('loadingText'),
+    instructionsScreen: document.getElementById('instructionsScreen'),
+    startFromInstructions: document.getElementById('startFromInstructions'),
     startScreen: document.getElementById('startScreen'),
     startBtn: document.getElementById('startBtn'),
+    instructionsBtn: document.getElementById('instructionsBtn'),
     hud: document.getElementById('hud'),
     scoreValue: document.getElementById('scoreValue'),
     levelValue: document.getElementById('levelValue'),
@@ -72,7 +77,8 @@ const el = {
     finalHighScore: document.getElementById('finalHighScore'),
     finalLevel: document.getElementById('finalLevel'),
     highScoreDisplay: document.getElementById('highScoreDisplay'),
-    bestLevelDisplay: document.getElementById('bestLevelDisplay')
+    bestLevelDisplay: document.getElementById('bestLevelDisplay'),
+    scorePopupContainer: document.getElementById('scorePopupContainer')
 };
 
 // ===== SCENE SETUP =====
@@ -170,17 +176,15 @@ const edgeMat = new THREE.LineBasicMaterial({
 const tubeLines = new THREE.LineSegments(edges, edgeMat);
 scene.add(tubeLines);
 
-// ===== OBSTACLES =====
+// ===== OBSTACLES (RED - AVOID) =====
 const obstaclePool = [];
 const activeObstacles = [];
 const obstacleGeo = new THREE.BoxGeometry(CONFIG.obstacleSize, CONFIG.obstacleSize, CONFIG.obstacleSize);
-const colors = [0x00ffff, 0xff00ff, 0xffff00, 0xff0080];
 
 function createObstaclePool(count) {
     for (let i = 0; i < count; i++) {
-        const color = colors[Math.floor(Math.random() * colors.length)];
         const mat = new THREE.MeshBasicMaterial({ 
-            color,
+            color: 0xff0000,
             transparent: true,
             opacity: 0.9
         });
@@ -233,6 +237,76 @@ function spawnObstacles(count) {
 }
 
 createObstaclePool(CONFIG.obstacleMaxCount);
+
+// ===== COLLECTIBLES (GREEN - COLLECT) =====
+const collectiblePool = [];
+const activeCollectibles = [];
+const collectibleGeo = new THREE.SphereGeometry(CONFIG.collectibleSize, 16, 16);
+
+function createCollectiblePool(count) {
+    for (let i = 0; i < count; i++) {
+        const mat = new THREE.MeshBasicMaterial({ 
+            color: 0x00ff00,
+            transparent: true,
+            opacity: 0.9
+        });
+        const mesh = new THREE.Mesh(collectibleGeo, mat);
+        mesh.visible = false;
+        scene.add(mesh);
+        
+        collectiblePool.push({
+            mesh,
+            pathPosition: 0,
+            active: false,
+            rotSpeed: 2
+        });
+    }
+}
+
+function spawnCollectibles() {
+    activeCollectibles.length = 0;
+    
+    collectiblePool.forEach(col => {
+        col.active = false;
+        col.mesh.visible = false;
+    });
+    
+    for (let i = 0; i < CONFIG.collectibleCount; i++) {
+        const collectible = collectiblePool[i];
+        
+        const p = 0.15 + (i / CONFIG.collectibleCount) * 0.8;
+        const pos = spline.getPointAt(p % 1);
+        
+        const angle = Math.random() * Math.PI * 2;
+        const distance = (Math.random() * 0.3 + 0.1) * CONFIG.tubeRadius;
+        pos.x += Math.cos(angle) * distance;
+        pos.y += Math.sin(angle) * distance;
+        
+        collectible.mesh.position.copy(pos);
+        collectible.pathPosition = p;
+        collectible.active = true;
+        collectible.mesh.visible = true;
+        
+        activeCollectibles.push(collectible);
+    }
+}
+
+createCollectiblePool(20);
+
+// ===== SCORE POPUP =====
+function showScorePopup(x, y, score, isPositive = true) {
+    const popup = document.createElement('div');
+    popup.className = `score-popup ${isPositive ? 'positive' : 'negative'}`;
+    popup.textContent = isPositive ? `+${score}` : '-1 HP';
+    popup.style.left = x + 'px';
+    popup.style.top = y + 'px';
+    
+    el.scorePopupContainer.appendChild(popup);
+    
+    setTimeout(() => {
+        popup.remove();
+    }, 1000);
+}
 
 // ===== INPUT =====
 const keys = {
@@ -335,7 +409,6 @@ if (mobileBoost) {
     mobileBoost.addEventListener('touchend', handleBoostEnd, { passive: false });
     mobileBoost.addEventListener('touchcancel', handleBoostEnd, { passive: false });
     
-    // Also support mouse for desktop testing
     mobileBoost.addEventListener('mousedown', handleBoostStart);
     mobileBoost.addEventListener('mouseup', handleBoostEnd);
     mobileBoost.addEventListener('mouseleave', handleBoostEnd);
@@ -388,6 +461,9 @@ function takeDamage() {
         repeat: 1
     });
     
+    // Show damage popup at center of screen
+    showScorePopup(window.innerWidth / 2, window.innerHeight / 2, 0, false);
+    
     setTimeout(() => {
         gameState.invulnerable = false;
     }, 1000);
@@ -395,6 +471,21 @@ function takeDamage() {
     if (gameState.health <= 0) {
         endGame();
     }
+}
+
+function collectItem() {
+    gameState.score += CONFIG.collectibleScoreValue;
+    
+    // Positive feedback
+    gsap.to(bloomPass, {
+        strength: 2.2,
+        duration: 0.15,
+        yoyo: true,
+        repeat: 1
+    });
+    
+    // Show score popup at center of screen
+    showScorePopup(window.innerWidth / 2, window.innerHeight / 2, CONFIG.collectibleScoreValue, true);
 }
 
 function updateHealthDisplay() {
@@ -471,8 +562,10 @@ function checkCollisions() {
     if (!gameState.isPlaying) return;
     
     const playerPos = camera.position;
-    const collisionRadius = CONFIG.playerRadius + CONFIG.obstacleSize;
-    const collisionRadiusSq = collisionRadius * collisionRadius;
+    
+    // Check obstacle collisions
+    const obstacleCollisionRadius = CONFIG.playerRadius + CONFIG.obstacleSize;
+    const obstacleCollisionRadiusSq = obstacleCollisionRadius * obstacleCollisionRadius;
     
     for (let obstacle of activeObstacles) {
         if (!obstacle.active) continue;
@@ -482,11 +575,30 @@ function checkCollisions() {
         const dz = playerPos.z - obstacle.mesh.position.z;
         const distSq = dx * dx + dy * dy + dz * dz;
         
-        if (distSq < collisionRadiusSq) {
+        if (distSq < obstacleCollisionRadiusSq) {
             takeDamage();
             obstacle.active = false;
             obstacle.mesh.visible = false;
             return;
+        }
+    }
+    
+    // Check collectible collisions
+    const collectibleCollisionRadius = CONFIG.playerRadius + CONFIG.collectibleSize;
+    const collectibleCollisionRadiusSq = collectibleCollisionRadius * collectibleCollisionRadius;
+    
+    for (let collectible of activeCollectibles) {
+        if (!collectible.active) continue;
+        
+        const dx = playerPos.x - collectible.mesh.position.x;
+        const dy = playerPos.y - collectible.mesh.position.y;
+        const dz = playerPos.z - collectible.mesh.position.z;
+        const distSq = dx * dx + dy * dy + dz * dz;
+        
+        if (distSq < collectibleCollisionRadiusSq) {
+            collectItem();
+            collectible.active = false;
+            collectible.mesh.visible = false;
         }
     }
 }
@@ -534,6 +646,17 @@ function animate() {
     for (let obstacle of activeObstacles) {
         if (!obstacle.active) continue;
         obstacle.mesh.rotation.y += delta * obstacle.rotSpeed;
+        obstacle.mesh.rotation.x += delta * obstacle.rotSpeed * 0.5;
+    }
+    
+    // Animate collectibles
+    for (let collectible of activeCollectibles) {
+        if (!collectible.active) continue;
+        collectible.mesh.rotation.y += delta * collectible.rotSpeed;
+        
+        // Pulsing effect
+        const scale = 1 + Math.sin(Date.now() * 0.005) * 0.2;
+        collectible.mesh.scale.set(scale, scale, scale);
     }
     
     // Animate particles
@@ -577,6 +700,7 @@ function levelUp() {
     );
     
     spawnObstacles(gameState.currentObstacleCount);
+    spawnCollectibles();
     
     gsap.to(el.levelValue, {
         scale: 1.5,
@@ -606,6 +730,7 @@ function startGame() {
     
     updateHealthDisplay();
     spawnObstacles(gameState.currentObstacleCount);
+    spawnCollectibles();
     
     el.hud.classList.add('active');
     
@@ -614,6 +739,14 @@ function startGame() {
         duration: 0.4,
         onComplete: () => {
             el.startScreen.style.display = 'none';
+        }
+    });
+    
+    gsap.to(el.instructionsScreen, {
+        opacity: 0,
+        duration: 0.4,
+        onComplete: () => {
+            el.instructionsScreen.style.display = 'none';
         }
     });
 }
@@ -663,8 +796,16 @@ function returnToMenu() {
     el.bestLevelDisplay.textContent = gameState.bestLevel;
 }
 
+function showInstructions() {
+    el.startScreen.style.display = 'none';
+    el.instructionsScreen.style.display = 'flex';
+    gsap.to(el.instructionsScreen, { opacity: 1, duration: 0.4 });
+}
+
 // ===== EVENT LISTENERS =====
 el.startBtn.addEventListener('click', startGame);
+el.instructionsBtn.addEventListener('click', showInstructions);
+el.startFromInstructions.addEventListener('click', startGame);
 el.restartBtn.addEventListener('click', () => {
     el.gameOver.classList.remove('active');
     startGame();
@@ -685,8 +826,8 @@ const loadInterval = setInterval(() => {
                 duration: 0.5,
                 onComplete: () => {
                     el.loadingScreen.style.display = 'none';
-                    el.startScreen.style.display = 'flex';
-                    gsap.to(el.startScreen, { opacity: 1, duration: 0.5 });
+                    el.instructionsScreen.style.display = 'flex';
+                    gsap.to(el.instructionsScreen, { opacity: 1, duration: 0.5 });
                 }
             });
         }, 300);
