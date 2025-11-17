@@ -35,6 +35,125 @@
         </div>
     </div>
 
+    <!-- NEW: Redesigned Instructions Screen -->
+    <div id="instructionsScreen" class="instructions-screen">
+        <div class="instructions-bg-grid"></div>
+        <div class="instructions-content">
+            <h1 class="instructions-main-title">
+                <span class="title-word">HOW</span>
+                <span class="title-word">TO</span>
+                <span class="title-word">PLAY</span>
+            </h1>
+            <p class="instructions-subtitle">Master the hyperspace tunnel and reach legendary status</p>
+            
+            <div class="instructions-cards-wrapper">
+                <!-- Controls Card -->
+                <div class="instruction-card controls-card">
+                    <div class="card-glow"></div>
+                    <div class="instruction-icon-wrapper">
+                        <i class="ri-gamepad-line"></i>
+                    </div>
+                    <h3>CONTROLS</h3>
+                    <div class="instruction-details">
+                        <div class="control-section">
+                            <p class="control-title">Desktop:</p>
+                            <div class="key-group">
+                                <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
+                            </div>
+                            <p class="control-desc">or Arrow Keys to move</p>
+                            <div class="key-group single">
+                                <kbd class="key-boost">SPACE</kbd>
+                            </div>
+                            <p class="control-desc">for turbo boost</p>
+                        </div>
+                        <div class="control-divider"></div>
+                        <div class="control-section">
+                            <p class="control-title">Mobile:</p>
+                            <p class="control-desc"><i class="ri-hand-coin-line"></i> Joystick to navigate</p>
+                            <p class="control-desc"><i class="ri-flashlight-line"></i> Tap BOOST for speed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Objective Card -->
+                <div class="instruction-card objective-card">
+                    <div class="card-glow"></div>
+                    <div class="instruction-icon-wrapper">
+                        <i class="ri-flag-line"></i>
+                    </div>
+                    <h3>OBJECTIVE</h3>
+                    <div class="instruction-details">
+                        <div class="objective-item">
+                            <i class="ri-arrow-right-line"></i>
+                            <span>Race through the endless tunnel</span>
+                        </div>
+                        <div class="objective-item">
+                            <i class="ri-arrow-right-line"></i>
+                            <span>Survive as long as possible</span>
+                        </div>
+                        <div class="objective-item">
+                            <i class="ri-arrow-right-line"></i>
+                            <span>Progress through levels</span>
+                        </div>
+                        <div class="objective-item highlight">
+                            <i class="ri-trophy-line"></i>
+                            <span>Beat your high score!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Collect Card -->
+                <div class="instruction-card collect-card">
+                    <div class="card-glow glow-green"></div>
+                    <div class="instruction-icon-wrapper green">
+                        <i class="ri-gem-line"></i>
+                    </div>
+                    <h3 class="title-green">COLLECT</h3>
+                    <div class="instruction-details">
+                        <div class="collect-item">
+                            <div class="particle-visual green-particle">
+                                <div class="particle-core"></div>
+                                <div class="particle-ring"></div>
+                            </div>
+                            <div class="collect-text">
+                                <p class="collect-name">Green Gems</p>
+                                <p class="collect-desc">Bonus points for each gem</p>
+                                <p class="collect-value">+50 POINTS</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avoid Card -->
+                <div class="instruction-card avoid-card">
+                    <div class="card-glow glow-red"></div>
+                    <div class="instruction-icon-wrapper red">
+                        <i class="ri-error-warning-line"></i>
+                    </div>
+                    <h3 class="title-red">AVOID</h3>
+                    <div class="instruction-details">
+                        <div class="avoid-item">
+                            <div class="particle-visual red-particle">
+                                <div class="particle-core"></div>
+                                <div class="particle-danger"></div>
+                            </div>
+                            <div class="avoid-text">
+                                <p class="avoid-name">Red Obstacles</p>
+                                <p class="avoid-desc">Damages your ship</p>
+                                <p class="avoid-value">3 LIVES ONLY!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="startFromInstructions" class="instructions-start-btn">
+                <span class="btn-text">START GAME</span>
+                <div class="btn-shine"></div>
+            </button>
+        </div>
+    </div>
+
     <!-- Streamlined Start Screen -->
     <div id="startScreen" class="start-screen">
         <div class="cosmic-bg"></div>
@@ -55,6 +174,10 @@
 
             <button id="startBtn" class="start-btn">
                 <span>START GAME</span>
+            </button>
+
+            <button id="instructionsBtn" class="secondary-btn">
+                <span>HOW TO PLAY</span>
             </button>
 
             <div class="controls-guide">
@@ -100,6 +223,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Score Popup Container -->
+    <div id="scorePopupContainer"></div>
 
     <!-- Mobile Controls -->
     <div id="mobileControls" class="mobile-controls">
