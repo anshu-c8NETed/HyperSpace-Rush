@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HYPERSPACE RUSH - Ultimate Racing Experience</title>
-    
+
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.7.0/fonts/remixicon.css" rel="stylesheet"/>
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.7.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="style.css">
-    
+    <link rel="stylesheet" href="style.css" />
+
     <script type="importmap">
       {
         "imports": {
@@ -22,251 +28,259 @@
         }
       }
     </script>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Quick Loading Screen -->
     <div id="loadingScreen" class="loading-screen">
-        <div class="loading-content">
-            <h1 class="loading-title">HYPERSPACE RUSH</h1>
-            <div class="loading-bar">
-                <div class="loading-progress" id="loadingProgress"></div>
-            </div>
-            <p class="loading-text" id="loadingText">LOADING...</p>
+      <div class="loading-content">
+        <h1 class="loading-title">HYPERSPACE RUSH</h1>
+        <div class="loading-bar">
+          <div class="loading-progress" id="loadingProgress"></div>
         </div>
+        <p class="loading-text" id="loadingText">LOADING...</p>
+      </div>
     </div>
 
     <!-- NEW: Redesigned Instructions Screen -->
     <div id="instructionsScreen" class="instructions-screen">
-        <div class="instructions-bg-grid"></div>
-        <div class="instructions-content">
-            <h1 class="instructions-main-title">
-                <span class="title-word">HOW</span>
-                <span class="title-word">TO</span>
-                <span class="title-word">PLAY</span>
-            </h1>
-            <p class="instructions-subtitle">Master the hyperspace tunnel and reach legendary status</p>
-            
-            <div class="instructions-cards-wrapper">
-                <!-- Controls Card -->
-                <div class="instruction-card controls-card">
-                    <div class="card-glow"></div>
-                    <div class="instruction-icon-wrapper">
-                        <i class="ri-gamepad-line"></i>
-                    </div>
-                    <h3>CONTROLS</h3>
-                    <div class="instruction-details">
-                        <div class="control-section">
-                            <p class="control-title">Desktop:</p>
-                            <div class="key-group">
-                                <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
-                            </div>
-                            <p class="control-desc">or Arrow Keys to move</p>
-                            <div class="key-group single">
-                                <kbd class="key-boost">SPACE</kbd>
-                            </div>
-                            <p class="control-desc">for turbo boost</p>
-                        </div>
-                        <div class="control-divider"></div>
-                        <div class="control-section">
-                            <p class="control-title">Mobile:</p>
-                            <p class="control-desc"><i class="ri-hand-coin-line"></i> Joystick to navigate</p>
-                            <p class="control-desc"><i class="ri-flashlight-line"></i> Tap BOOST for speed</p>
-                        </div>
-                    </div>
-                </div>
+      <div class="instructions-bg-grid"></div>
+      <div class="instructions-content">
+        <h1 class="instructions-main-title">
+          <span class="title-word">HOW</span>
+          <span class="title-word">TO</span>
+          <span class="title-word">PLAY</span>
+        </h1>
+        <p class="instructions-subtitle">
+          Master the hyperspace tunnel and reach legendary status
+        </p>
 
-                <!-- Objective Card -->
-                <div class="instruction-card objective-card">
-                    <div class="card-glow"></div>
-                    <div class="instruction-icon-wrapper">
-                        <i class="ri-flag-line"></i>
-                    </div>
-                    <h3>OBJECTIVE</h3>
-                    <div class="instruction-details">
-                        <div class="objective-item">
-                            <i class="ri-arrow-right-line"></i>
-                            <span>Race through the endless tunnel</span>
-                        </div>
-                        <div class="objective-item">
-                            <i class="ri-arrow-right-line"></i>
-                            <span>Survive as long as possible</span>
-                        </div>
-                        <div class="objective-item">
-                            <i class="ri-arrow-right-line"></i>
-                            <span>Progress through levels</span>
-                        </div>
-                        <div class="objective-item highlight">
-                            <i class="ri-trophy-line"></i>
-                            <span>Beat your high score!</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Collect Card -->
-                <div class="instruction-card collect-card">
-                    <div class="card-glow glow-green"></div>
-                    <div class="instruction-icon-wrapper green">
-                        <i class="ri-gem-line"></i>
-                    </div>
-                    <h3 class="title-green">COLLECT</h3>
-                    <div class="instruction-details">
-                        <div class="collect-item">
-                            <div class="particle-visual green-particle">
-                                <div class="particle-core"></div>
-                                <div class="particle-ring"></div>
-                            </div>
-                            <div class="collect-text">
-                                <p class="collect-name">Green Gems</p>
-                                <p class="collect-desc">Bonus points for each gem</p>
-                                <p class="collect-value">+50 POINTS</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Avoid Card -->
-                <div class="instruction-card avoid-card">
-                    <div class="card-glow glow-red"></div>
-                    <div class="instruction-icon-wrapper red">
-                        <i class="ri-error-warning-line"></i>
-                    </div>
-                    <h3 class="title-red">AVOID</h3>
-                    <div class="instruction-details">
-                        <div class="avoid-item">
-                            <div class="particle-visual red-particle">
-                                <div class="particle-core"></div>
-                                <div class="particle-danger"></div>
-                            </div>
-                            <div class="avoid-text">
-                                <p class="avoid-name">Red Obstacles</p>
-                                <p class="avoid-desc">Damages your ship</p>
-                                <p class="avoid-value">3 LIVES ONLY!</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="instructions-cards-wrapper">
+          <!-- Controls Card -->
+          <div class="instruction-card controls-card">
+            <div class="card-glow"></div>
+            <div class="instruction-icon-wrapper">
+              <i class="ri-gamepad-line"></i>
             </div>
+            <h3>CONTROLS</h3>
+            <div class="instruction-details">
+              <div class="control-section">
+                <p class="control-title">Desktop:</p>
+                <div class="key-group">
+                  <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
+                </div>
+                <p class="control-desc">or Arrow Keys to move</p>
+                <div class="key-group single">
+                  <kbd class="key-boost">SPACE</kbd>
+                </div>
+                <p class="control-desc">for turbo boost</p>
+              </div>
+              <div class="control-divider"></div>
+              <div class="control-section">
+                <p class="control-title">Mobile:</p>
+                <p class="control-desc">
+                  <i class="ri-hand-coin-line"></i> Joystick to navigate
+                </p>
+                <p class="control-desc">
+                  <i class="ri-flashlight-line"></i> Tap BOOST for speed
+                </p>
+              </div>
+            </div>
+          </div>
 
-            <button id="startFromInstructions" class="instructions-start-btn">
-                <span class="btn-text">START GAME</span>
-                <div class="btn-shine"></div>
-            </button>
+          <!-- Objective Card -->
+          <div class="instruction-card objective-card">
+            <div class="card-glow"></div>
+            <div class="instruction-icon-wrapper">
+              <i class="ri-flag-line"></i>
+            </div>
+            <h3>OBJECTIVE</h3>
+            <div class="instruction-details">
+              <div class="objective-item">
+                <i class="ri-arrow-right-line"></i>
+                <span>Race through the endless tunnel</span>
+              </div>
+              <div class="objective-item">
+                <i class="ri-arrow-right-line"></i>
+                <span>Survive as long as possible</span>
+              </div>
+              <div class="objective-item">
+                <i class="ri-arrow-right-line"></i>
+                <span>Progress through levels</span>
+              </div>
+              <div class="objective-item highlight">
+                <i class="ri-trophy-line"></i>
+                <span>Beat your high score!</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Collect Card -->
+          <div class="instruction-card collect-card">
+            <div class="card-glow glow-green"></div>
+            <div class="instruction-icon-wrapper green">
+              <i class="ri-gem-line"></i>
+            </div>
+            <h3 class="title-green">COLLECT</h3>
+            <div class="instruction-details">
+              <div class="collect-item">
+                <div class="particle-visual green-particle">
+                  <div class="particle-core"></div>
+                  <div class="particle-ring"></div>
+                </div>
+                <div class="collect-text">
+                  <p class="collect-name">Green Gems</p>
+                  <p class="collect-desc">Bonus points for each gem</p>
+                  <p class="collect-value">+50 POINTS</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Avoid Card -->
+          <div class="instruction-card avoid-card">
+            <div class="card-glow glow-red"></div>
+            <div class="instruction-icon-wrapper red">
+              <i class="ri-error-warning-line"></i>
+            </div>
+            <h3 class="title-red">AVOID</h3>
+            <div class="instruction-details">
+              <div class="avoid-item">
+                <div class="particle-visual red-particle">
+                  <div class="particle-core"></div>
+                  <div class="particle-danger"></div>
+                </div>
+                <div class="avoid-text">
+                  <p class="avoid-name">Red Obstacles</p>
+                  <p class="avoid-desc">Damages your ship</p>
+                  <p class="avoid-value">3 LIVES ONLY!</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <button id="startFromInstructions" class="instructions-start-btn">
+          <span class="btn-text">START GAME</span>
+          <div class="btn-shine"></div>
+        </button>
+      </div>
     </div>
 
     <!-- Streamlined Start Screen -->
     <div id="startScreen" class="start-screen">
-        <div class="cosmic-bg"></div>
-        
-        <div class="start-content">
-            <h1 class="game-title">HYPERSPACE<br>RUSH</h1>
-            
-            <div class="stats-row">
-                <div class="stat-card">
-                    <div class="stat-value" id="highScoreDisplay">0</div>
-                    <div class="stat-label">HIGH SCORE</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="bestLevelDisplay">1</div>
-                    <div class="stat-label">BEST LEVEL</div>
-                </div>
-            </div>
+      <div class="cosmic-bg"></div>
 
-            <button id="startBtn" class="start-btn">
-                <span>START GAME</span>
-            </button>
+      <div class="start-content">
+        <h1 class="game-title">HYPERSPACE<br />RUSH</h1>
 
-            <button id="instructionsBtn" class="secondary-btn">
-                <span>HOW TO PLAY</span>
-            </button>
-
-            <div class="controls-guide">
-                <div class="control-item">
-                    <kbd>WASD</kbd> or <kbd>ARROWS</kbd> <span>Move</span>
-                </div>
-                <div class="control-item">
-                    <kbd>SPACE</kbd> <span>Boost</span>
-                </div>
-            </div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-value" id="highScoreDisplay">0</div>
+            <div class="stat-label">HIGH SCORE</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="bestLevelDisplay">1</div>
+            <div class="stat-label">BEST LEVEL</div>
+          </div>
         </div>
+
+        <button id="startBtn" class="start-btn">
+          <span>START GAME</span>
+        </button>
+
+        <button id="instructionsBtn" class="secondary-btn">
+          <span>HOW TO PLAY</span>
+        </button>
+
+        <div class="controls-guide">
+          <div class="control-item">
+            <kbd>WASD</kbd> or <kbd>ARROWS</kbd> <span>Move</span>
+          </div>
+          <div class="control-item"><kbd>SPACE</kbd> <span>Boost</span></div>
+        </div>
+      </div>
     </div>
 
     <!-- Simplified HUD -->
     <div id="hud" class="hud">
-        <div class="hud-top">
-            <div class="hud-item">
-                <div class="hud-label">SCORE</div>
-                <div class="hud-value" id="scoreValue">0</div>
-            </div>
-            
-            <div class="hud-item center">
-                <div class="hud-label">LEVEL</div>
-                <div class="hud-value" id="levelValue">1</div>
-            </div>
-
-            <div class="hud-item">
-                <div class="hud-label">HEALTH</div>
-                <div class="health-display">
-                    <div class="health-bar" id="healthBar1"></div>
-                    <div class="health-bar" id="healthBar2"></div>
-                    <div class="health-bar" id="healthBar3"></div>
-                </div>
-            </div>
+      <div class="hud-top">
+        <div class="hud-item">
+          <div class="hud-label">SCORE</div>
+          <div class="hud-value" id="scoreValue">0</div>
         </div>
 
-        <div class="hud-bottom">
-            <div class="boost-container">
-                <div class="boost-label">BOOST</div>
-                <div class="boost-bar-bg">
-                    <div class="boost-bar" id="boostBar"></div>
-                </div>
-            </div>
+        <div class="hud-item center">
+          <div class="hud-label">LEVEL</div>
+          <div class="hud-value" id="levelValue">1</div>
         </div>
+
+        <div class="hud-item">
+          <div class="hud-label">HEALTH</div>
+          <div class="health-display">
+            <div class="health-bar" id="healthBar1"></div>
+            <div class="health-bar" id="healthBar2"></div>
+            <div class="health-bar" id="healthBar3"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud-bottom">
+        <div class="boost-container">
+          <div class="boost-label">BOOST</div>
+          <div class="boost-bar-bg">
+            <div class="boost-bar" id="boostBar"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
+    <!-- Watermark -->
+    <div class="watermark">
+      <span>Made by A.R</span>
+    </div>
     <!-- Score Popup Container -->
     <div id="scorePopupContainer"></div>
 
     <!-- Mobile Controls -->
     <div id="mobileControls" class="mobile-controls">
-        <div class="joystick-area" id="joystickArea">
-            <div class="joystick" id="joystick"></div>
-        </div>
-        <button class="boost-btn" id="mobileBoost">BOOST</button>
+      <div class="joystick-area" id="joystickArea">
+        <div class="joystick" id="joystick"></div>
+      </div>
+      <button class="boost-btn" id="mobileBoost">BOOST</button>
     </div>
 
     <!-- Game Over Screen -->
     <div id="gameOver" class="game-over-screen">
-        <div class="game-over-content">
-            <h1 class="game-over-title">GAME OVER</h1>
-            
-            <div class="final-stats">
-                <div class="final-stat main">
-                    <div class="final-label">SCORE</div>
-                    <div class="final-value" id="finalScore">0</div>
-                </div>
-                
-                <div class="final-stat">
-                    <div class="final-label">HIGH SCORE</div>
-                    <div class="final-value" id="finalHighScore">0</div>
-                </div>
+      <div class="game-over-content">
+        <h1 class="game-over-title">GAME OVER</h1>
 
-                <div class="final-stat">
-                    <div class="final-label">LEVEL</div>
-                    <div class="final-value" id="finalLevel">1</div>
-                </div>
-            </div>
+        <div class="final-stats">
+          <div class="final-stat main">
+            <div class="final-label">SCORE</div>
+            <div class="final-value" id="finalScore">0</div>
+          </div>
 
-            <div class="game-over-actions">
-                <button id="restartBtn" class="game-btn primary">PLAY AGAIN</button>
-                <button id="mainMenuBtn" class="game-btn secondary">MENU</button>
-            </div>
+          <div class="final-stat">
+            <div class="final-label">HIGH SCORE</div>
+            <div class="final-value" id="finalHighScore">0</div>
+          </div>
+
+          <div class="final-stat">
+            <div class="final-label">LEVEL</div>
+            <div class="final-value" id="finalLevel">1</div>
+          </div>
         </div>
+
+        <div class="game-over-actions">
+          <button id="restartBtn" class="game-btn primary">PLAY AGAIN</button>
+          <button id="mainMenuBtn" class="game-btn secondary">MENU</button>
+        </div>
+      </div>
     </div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script type="module" src="spline.js"></script>
     <script type="module" src="main.js"></script>
-</body>
+  </body>
 </html>
