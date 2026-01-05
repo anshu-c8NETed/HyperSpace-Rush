@@ -23,11 +23,32 @@ const CONFIG = {
   collectibleSize: 0.1,
   collectibleCount: 8,
   collectibleScoreValue: 50,
-  particleCount: 800,
   boostPower: 2.0,
   boostDuration: 1500,
   boostRechargeRate: 15,
   healthMax: 3,
+};
+
+// Enhanced particle config
+const CONFIG_PARTICLES = {
+  desktop: 1200,
+  mobile: 600,
+};
+
+// ===== AUDIO FEEDBACK =====
+const AudioFeedback = {
+  collect: () => {
+    navigator.vibrate && navigator.vibrate(50);
+  },
+  damage: () => {
+    navigator.vibrate && navigator.vibrate([100, 50, 100]);
+  },
+  boost: () => {
+    navigator.vibrate && navigator.vibrate(30);
+  },
+  levelUp: () => {
+    navigator.vibrate && navigator.vibrate([50, 30, 50, 30, 100]);
+  },
 };
 
 // ===== GAME STATE =====
@@ -52,6 +73,9 @@ const gameState = {
   health: CONFIG.healthMax,
   invulnerable: false,
 };
+
+// Pause state
+let isPaused = false;
 
 // ===== DOM ELEMENTS =====
 const el = {
@@ -93,12 +117,16 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.z = 5;
 
+const isMobileDevice = window.innerWidth <= 768 || "ontouchstart" in window;
+
 const renderer = new THREE.WebGLRenderer({
   antialias: window.innerWidth > 768,
   powerPreference: "high-performance",
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(
+  Math.min(window.devicePixelRatio, isMobileDevice ? 1.5 : 2)
+);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.2;
 document.body.appendChild(renderer.domElement);
@@ -109,7 +137,7 @@ composer.addPass(new RenderPass(scene, camera));
 
 const bloomPass = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
-  1.5,
+  isMobileDevice ? 1.2 : 1.5,
   0.4,
   0.85
 );
@@ -130,27 +158,51 @@ const pointLight = new THREE.PointLight(0xffff00, 1.0, 100);
 pointLight.position.set(0, 0, 10);
 scene.add(pointLight);
 
-// ===== PARTICLE SYSTEM =====
-const particleGeo = new THREE.BufferGeometry();
-const particlePos = new Float32Array(CONFIG.particleCount * 3);
-const particleVel = new Float32Array(CONFIG.particleCount);
+// ===== ENHANCED PARTICLE SYSTEM =====
+const PARTICLE_COUNT = isMobileDevice
+  ? CONFIG_PARTICLES.mobile
+  : CONFIG_PARTICLES.desktop;
 
-for (let i = 0; i < CONFIG.particleCount; i++) {
+const particleGeo = new THREE.BufferGeometry();
+const particlePos = new Float32Array(PARTICLE_COUNT * 3);
+const particleVel = new Float32Array(PARTICLE_COUNT);
+const particleColors = new Float32Array(PARTICLE_COUNT * 3);
+
+for (let i = 0; i < PARTICLE_COUNT; i++) {
   const i3 = i * 3;
-  particlePos[i3] = (Math.random() - 0.5) * 50;
-  particlePos[i3 + 1] = (Math.random() - 0.5) * 50;
-  particlePos[i3 + 2] = (Math.random() - 0.5) * 100;
-  particleVel[i] = Math.random() * 2 + 1;
+
+  particlePos[i3] = (Math.random() - 0.5) * 60;
+  particlePos[i3 + 1] = (Math.random() - 0.5) * 60;
+  particlePos[i3 + 2] = (Math.random() - 0.5) * 120;
+
+  particleVel[i] = Math.random() * 2.5 + 0.8;
+
+  const colorChoice = Math.random();
+  if (colorChoice < 0.6) {
+    particleColors[i3] = 0;
+    particleColors[i3 + 1] = 1;
+    particleColors[i3 + 2] = 1;
+  } else if (colorChoice < 0.9) {
+    particleColors[i3] = 1;
+    particleColors[i3 + 1] = 0;
+    particleColors[i3 + 2] = 1;
+  } else {
+    particleColors[i3] = 1;
+    particleColors[i3 + 1] = 1;
+    particleColors[i3 + 2] = Math.random() * 0.5 + 0.5;
+  }
 }
 
 particleGeo.setAttribute("position", new THREE.BufferAttribute(particlePos, 3));
+particleGeo.setAttribute("color", new THREE.BufferAttribute(particleColors, 3));
 
 const particleMat = new THREE.PointsMaterial({
-  size: 0.12,
-  color: 0x00ffff,
+  size: isMobileDevice ? 0.1 : 0.15,
+  vertexColors: true,
   blending: THREE.AdditiveBlending,
   transparent: true,
-  opacity: 0.7,
+  opacity: 0.8,
+  sizeAttenuation: true,
 });
 
 const particles = new THREE.Points(particleGeo, particleMat);
@@ -336,15 +388,30 @@ const keys = {
   space: false,
 };
 
+let lastBoostTime = 0;
+const boostCooldownInput = 100;
+
 window.addEventListener("keydown", (e) => {
   const key = e.key.toLowerCase();
+
+  // Pause handling
+  if (e.key === "Escape" && gameState.isPlaying) {
+    togglePause();
+    e.preventDefault();
+    return;
+  }
+
   if (key in keys || key.startsWith("arrow")) {
     keys[key] = true;
     e.preventDefault();
   }
-  // Handle space bar specifically
+
   if (e.code === "Space" || key === " ") {
-    keys.space = true;
+    const now = Date.now();
+    if (now - lastBoostTime > boostCooldownInput) {
+      keys.space = true;
+      lastBoostTime = now;
+    }
     e.preventDefault();
   }
 });
@@ -354,7 +421,6 @@ window.addEventListener("keyup", (e) => {
   if (key in keys || key.startsWith("arrow")) {
     keys[key] = false;
   }
-  // Handle space bar specifically
   if (e.code === "Space" || key === " ") {
     keys.space = false;
   }
@@ -367,8 +433,6 @@ const joystickArea = document.getElementById("joystickArea");
 const joystick = document.getElementById("joystick");
 
 if (joystickArea) {
-  const isMobile = window.innerWidth <= 768 || "ontouchstart" in window;
-
   const handleStart = (e) => {
     joystickActive = true;
     const rect = joystickArea.getBoundingClientRect();
@@ -413,7 +477,7 @@ if (joystickArea) {
     keys.a = keys.d = keys.w = keys.s = false;
   };
 
-  if (isMobile) {
+  if (isMobileDevice) {
     joystickArea.addEventListener("touchstart", handleStart, { passive: true });
     joystickArea.addEventListener("touchmove", handleMove, { passive: false });
     joystickArea.addEventListener("touchend", handleEnd, { passive: true });
@@ -448,6 +512,50 @@ if (mobileBoost) {
   mobileBoost.addEventListener("mouseleave", handleBoostEnd);
 }
 
+// ===== PAUSE FUNCTIONALITY =====
+function createPauseOverlay() {
+  const overlay = document.createElement("div");
+  overlay.id = "pauseOverlay";
+  overlay.style.cssText = `
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 18, 0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9900;
+    opacity: 0;
+  `;
+
+  overlay.innerHTML = `
+    <div style="text-align: center;">
+      <h1 style="font-family: var(--font-display); font-size: 3rem; color: var(--cyan); margin-bottom: 20px;">PAUSED</h1>
+      <p style="font-size: 1.2rem; color: rgba(255, 255, 255, 0.7);">Press ESC to resume</p>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  return overlay;
+}
+
+function togglePause() {
+  isPaused = !isPaused;
+
+  const pauseOverlay =
+    document.getElementById("pauseOverlay") || createPauseOverlay();
+
+  if (isPaused) {
+    pauseOverlay.style.display = "flex";
+    gsap.to(pauseOverlay, { opacity: 1, duration: 0.3 });
+  } else {
+    gsap.to(pauseOverlay, {
+      opacity: 0,
+      duration: 0.3,
+      onComplete: () => (pauseOverlay.style.display = "none"),
+    });
+  }
+}
+
 // ===== GAME MECHANICS =====
 function activateBoost() {
   if (
@@ -457,16 +565,30 @@ function activateBoost() {
   ) {
     gameState.boostActive = true;
 
+    AudioFeedback.boost();
+
     gsap.to(bloomPass, {
-      strength: 2.5,
-      duration: 0.2,
+      strength: 3.0,
+      duration: 0.3,
       yoyo: true,
       repeat: 1,
     });
 
+    const boostContainer = document.querySelector(".boost-container");
+    if (boostContainer) {
+      boostContainer.style.transform = "scale(1.1)";
+      boostContainer.style.borderColor = "var(--orange)";
+    }
+
     setTimeout(() => {
       gameState.boostActive = false;
       gameState.boostCooldown = true;
+
+      if (boostContainer) {
+        boostContainer.style.transform = "scale(1)";
+        boostContainer.style.borderColor = "rgba(255, 255, 0, 0.4)";
+      }
+
       setTimeout(() => {
         gameState.boostCooldown = false;
       }, 800);
@@ -480,18 +602,35 @@ function takeDamage() {
   gameState.health--;
   gameState.invulnerable = true;
 
+  AudioFeedback.damage();
+
   updateHealthDisplay();
 
-  // Screen shake
   gsap.to(camera.position, {
-    x: camera.position.x + (Math.random() - 0.5) * 0.2,
-    y: camera.position.y + (Math.random() - 0.5) * 0.2,
+    x: camera.position.x + (Math.random() - 0.5) * 0.3,
+    y: camera.position.y + (Math.random() - 0.5) * 0.3,
     duration: 0.05,
     yoyo: true,
-    repeat: 3,
+    repeat: 5,
+    ease: "power2.inOut",
   });
 
-  // Flash
+  const flashDiv = document.createElement("div");
+  flashDiv.style.cssText = `
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 0, 0, 0.3);
+    pointer-events: none;
+    z-index: 9999;
+  `;
+  document.body.appendChild(flashDiv);
+
+  gsap.to(flashDiv, {
+    opacity: 0,
+    duration: 0.3,
+    onComplete: () => flashDiv.remove(),
+  });
+
   gsap.to(renderer, {
     toneMappingExposure: 2.5,
     duration: 0.1,
@@ -499,12 +638,11 @@ function takeDamage() {
     repeat: 1,
   });
 
-  // Show damage popup at center of screen
   showScorePopup(window.innerWidth / 2, window.innerHeight / 2, 0, false);
 
   setTimeout(() => {
     gameState.invulnerable = false;
-  }, 1000);
+  }, 1200);
 
   if (gameState.health <= 0) {
     endGame();
@@ -514,15 +652,22 @@ function takeDamage() {
 function collectItem() {
   gameState.score += CONFIG.collectibleScoreValue;
 
-  // Positive feedback
+  AudioFeedback.collect();
+
   gsap.to(bloomPass, {
-    strength: 2.2,
+    strength: 2.5,
+    duration: 0.1,
+    yoyo: true,
+    repeat: 1,
+  });
+
+  gsap.to(el.scoreValue, {
+    scale: 1.3,
     duration: 0.15,
     yoyo: true,
     repeat: 1,
   });
 
-  // Show score popup at center of screen
   showScorePopup(
     window.innerWidth / 2,
     window.innerHeight / 2,
@@ -560,7 +705,6 @@ function updateCamera(delta) {
     .normalize();
   const up = new THREE.Vector3().copy(camera.up).normalize();
 
-  // Input
   const moveUp = keys.w || keys.arrowup;
   const moveDown = keys.s || keys.arrowdown;
   const moveLeft = keys.a || keys.arrowleft;
@@ -580,7 +724,6 @@ function updateCamera(delta) {
   gameState.offsetX += gameState.velocityX * delta;
   gameState.offsetY += gameState.velocityY * delta;
 
-  // Clamp
   const offsetMagnitude = Math.sqrt(
     gameState.offsetX ** 2 + gameState.offsetY ** 2
   );
@@ -598,29 +741,29 @@ function updateCamera(delta) {
   camera.position.add(offsetVec);
   pointLight.position.copy(camera.position);
 
-  // Boost - check during gameplay
   if (keys.space && gameState.isPlaying) {
     activateBoost();
   }
 }
 
-// ===== COLLISION =====
+// ===== OPTIMIZED COLLISION =====
 function checkCollisions() {
   if (!gameState.isPlaying) return;
 
   const playerPos = camera.position;
+  const viewDistance = 15;
 
-  // Check obstacle collisions
-  const obstacleCollisionRadius = CONFIG.playerRadius + CONFIG.obstacleSize;
   const obstacleCollisionRadiusSq =
-    obstacleCollisionRadius * obstacleCollisionRadius;
+    (CONFIG.playerRadius + CONFIG.obstacleSize) ** 2;
 
   for (let obstacle of activeObstacles) {
     if (!obstacle.active) continue;
 
+    const dz = playerPos.z - obstacle.mesh.position.z;
+    if (Math.abs(dz) > viewDistance) continue;
+
     const dx = playerPos.x - obstacle.mesh.position.x;
     const dy = playerPos.y - obstacle.mesh.position.y;
-    const dz = playerPos.z - obstacle.mesh.position.z;
     const distSq = dx * dx + dy * dy + dz * dz;
 
     if (distSq < obstacleCollisionRadiusSq) {
@@ -631,18 +774,17 @@ function checkCollisions() {
     }
   }
 
-  // Check collectible collisions
-  const collectibleCollisionRadius =
-    CONFIG.playerRadius + CONFIG.collectibleSize;
   const collectibleCollisionRadiusSq =
-    collectibleCollisionRadius * collectibleCollisionRadius;
+    (CONFIG.playerRadius + CONFIG.collectibleSize) ** 2;
 
   for (let collectible of activeCollectibles) {
     if (!collectible.active) continue;
 
+    const dz = playerPos.z - collectible.mesh.position.z;
+    if (Math.abs(dz) > viewDistance) continue;
+
     const dx = playerPos.x - collectible.mesh.position.x;
     const dy = playerPos.y - collectible.mesh.position.y;
-    const dz = playerPos.z - collectible.mesh.position.z;
     const distSq = dx * dx + dy * dy + dz * dz;
 
     if (distSq < collectibleCollisionRadiusSq) {
@@ -655,11 +797,25 @@ function checkCollisions() {
 
 // ===== GAME LOOP =====
 const clock = new THREE.Clock();
+let lastFrameTime = 0;
+const targetFPS = 60;
+const frameTime = 1000 / targetFPS;
 
-function animate() {
+function animate(currentTime = 0) {
   requestAnimationFrame(animate);
 
-  const delta = clock.getDelta();
+  if (isPaused) {
+    return;
+  }
+
+  const deltaTime = currentTime - lastFrameTime;
+
+  if (deltaTime < frameTime) {
+    return;
+  }
+
+  lastFrameTime = currentTime - (deltaTime % frameTime);
+  const delta = Math.min(clock.getDelta(), 0.1);
 
   if (gameState.isPlaying) {
     const effectiveSpeed = gameState.boostActive
@@ -669,7 +825,6 @@ function animate() {
     gameState.elapsedMs += delta * 1000 * effectiveSpeed;
     gameState.score += delta * CONFIG.scorePerSecond * effectiveSpeed;
 
-    // Level up
     const newLevel =
       Math.floor(gameState.score / CONFIG.levelScoreThreshold) + 1;
     if (newLevel > gameState.level) {
@@ -677,7 +832,6 @@ function animate() {
       levelUp();
     }
 
-    // Boost recharge
     if (!gameState.boostActive && gameState.boostCharge < 100) {
       gameState.boostCharge += CONFIG.boostRechargeRate * delta;
       if (gameState.boostCharge > 100) gameState.boostCharge = 100;
@@ -693,44 +847,49 @@ function animate() {
     updateHUD();
   }
 
-  // Animate obstacles
   for (let obstacle of activeObstacles) {
     if (!obstacle.active) continue;
     obstacle.mesh.rotation.y += delta * obstacle.rotSpeed;
     obstacle.mesh.rotation.x += delta * obstacle.rotSpeed * 0.5;
   }
-
-  // Animate collectibles
   for (let collectible of activeCollectibles) {
     if (!collectible.active) continue;
     collectible.mesh.rotation.y += delta * collectible.rotSpeed;
 
-    // Pulsing effect
     const scale = 1 + Math.sin(Date.now() * 0.005) * 0.2;
     collectible.mesh.scale.set(scale, scale, scale);
   }
 
   // Animate particles
   const positions = particles.geometry.attributes.position.array;
+  const colors = particles.geometry.attributes.color.array;
   const effectiveSpeed = gameState.isPlaying
     ? gameState.boostActive
       ? gameState.speedMultiplier * CONFIG.boostPower
       : gameState.speedMultiplier
     : 1;
 
-  for (let i = 0; i < CONFIG.particleCount; i++) {
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
     const i3 = i * 3;
     positions[i3 + 2] += particleVel[i] * effectiveSpeed * delta * 15;
 
     if (positions[i3 + 2] > 50) {
-      positions[i3 + 2] = -50;
-      positions[i3] = (Math.random() - 0.5) * 50;
-      positions[i3 + 1] = (Math.random() - 0.5) * 50;
+      positions[i3 + 2] = -60;
+      positions[i3] = (Math.random() - 0.5) * 60;
+      positions[i3 + 1] = (Math.random() - 0.5) * 60;
+    }
+
+    if (gameState.boostActive) {
+      const pulse = Math.sin(Date.now() * 0.01 + i) * 0.3 + 0.7;
+      colors[i3] *= pulse;
+      colors[i3 + 1] *= pulse;
+      colors[i3 + 2] *= pulse;
     }
   }
-  particles.geometry.attributes.position.needsUpdate = true;
 
-  // Animate tunnel
+  particles.geometry.attributes.position.needsUpdate = true;
+  particles.geometry.attributes.color.needsUpdate = true;
+
   const time = Date.now() * 0.0002;
   tubeLines.material.color.setHSL((time * 0.3) % 1, 1, 0.5);
 
@@ -757,12 +916,117 @@ function levelUp() {
   spawnObstacles(gameState.currentObstacleCount);
   spawnCollectibles();
 
+  AudioFeedback.levelUp();
+
   gsap.to(el.levelValue, {
-    scale: 1.5,
-    duration: 0.2,
+    scale: 2,
+    duration: 0.3,
     yoyo: true,
     repeat: 1,
+    ease: "back.out(2)",
   });
+
+  const levelUpDiv = document.createElement("div");
+  levelUpDiv.textContent = `LEVEL ${gameState.level}`;
+  levelUpDiv.style.cssText = `
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 8vw, 4rem);
+  font-weight: 900;
+  color: var(--cyan);
+  text-shadow: 0 0 40px var(--cyan);
+  pointer-events: none;
+  z-index: 9999;
+  letter-spacing: 0.2em;
+  padding: 0 20px;
+  text-align: center;
+  white-space: nowrap;
+`;
+  document.body.appendChild(levelUpDiv);
+
+  gsap.fromTo(
+    levelUpDiv,
+    { scale: 0.5, opacity: 0 },
+    {
+      scale: 1.5,
+      opacity: 1,
+      duration: 0.3,
+      ease: "back.out(2)",
+    }
+  );
+
+  gsap.to(levelUpDiv, {
+    opacity: 0,
+    scale: 2,
+    duration: 0.5,
+    delay: 0.8,
+    onComplete: () => levelUpDiv.remove(),
+  });
+
+  gsap.to(bloomPass, {
+    strength: 3.0,
+    duration: 0.2,
+    yoyo: true,
+    repeat: 2,
+  });
+}
+
+// ===== TUTORIAL HINTS =====
+function showTutorialHints() {
+  const hasPlayedBefore = localStorage.getItem("hyperspace_has_played");
+
+  if (!hasPlayedBefore) {
+    localStorage.setItem("hyperspace_has_played", "true");
+
+    setTimeout(() => {
+      if (gameState.isPlaying && gameState.score < 100) {
+        const hint = document.createElement("div");
+        hint.textContent = "Collect green gems for bonus points!";
+        hint.style.cssText = `
+          position: fixed;
+          top: 120px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: rgba(0, 255, 0, 0.2);
+          border: 2px solid var(--green);
+          padding: 15px 30px;
+          border-radius: 10px;
+          font-family: var(--font-body);
+          font-size: 1.1rem;
+          color: var(--green);
+          z-index: 9000;
+          pointer-events: none;
+        `;
+        document.body.appendChild(hint);
+
+        gsap.to(hint, {
+          opacity: 0,
+          y: -20,
+          duration: 0.5,
+          delay: 3,
+          onComplete: () => hint.remove(),
+        });
+      }
+    }, 3000);
+  }
+}
+
+function cleanupGameObjects() {
+  activeObstacles.forEach((obs) => {
+    obs.active = false;
+    obs.mesh.visible = false;
+  });
+
+  activeCollectibles.forEach((col) => {
+    col.active = false;
+    col.mesh.visible = false;
+  });
+
+  activeObstacles.length = 0;
+  activeCollectibles.length = 0;
 }
 
 function startGame() {
@@ -786,6 +1050,7 @@ function startGame() {
   updateHealthDisplay();
   spawnObstacles(gameState.currentObstacleCount);
   spawnCollectibles();
+  showTutorialHints();
 
   el.hud.classList.add("active");
 
@@ -836,6 +1101,8 @@ function endGame() {
 }
 
 function returnToMenu() {
+  cleanupGameObjects();
+
   el.gameOver.classList.remove("active");
   el.hud.classList.remove("active");
 
@@ -891,20 +1158,30 @@ const loadInterval = setInterval(() => {
   el.loadingProgress.style.width = loadProgress + "%";
 }, 150);
 
-// Update menu stats
 el.highScoreDisplay.textContent = Math.floor(gameState.highScore);
 el.bestLevelDisplay.textContent = gameState.bestLevel;
 
-// ===== RESIZE =====
+// ===== OPTIMIZED RESIZE =====
 let resizeTimeout;
+let isResizing = false;
+
 window.addEventListener("resize", () => {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(() => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    composer.setSize(window.innerWidth, window.innerHeight);
-  }, 100);
+  if (!isResizing) {
+    isResizing = true;
+    clearTimeout(resizeTimeout);
+
+    resizeTimeout = setTimeout(() => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+      composer.setSize(width, height);
+
+      isResizing = false;
+    }, 150);
+  }
 });
 
 // Prevent pull-to-refresh on mobile
@@ -921,8 +1198,13 @@ document.body.addEventListener(
 // Lock orientation on mobile if possible
 if (screen.orientation && screen.orientation.lock) {
   screen.orientation.lock("landscape").catch(() => {
-    // Orientation lock not supported or failed, continue anyway
+    // Orientation lock not supported or failed
   });
+}
+
+// Show mobile controls
+if (isMobileDevice) {
+  document.getElementById("mobileControls").style.display = "flex";
 }
 
 animate();
