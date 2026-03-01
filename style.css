@@ -2089,3 +2089,68 @@ body:hover .watermark span {
     padding: 15px 40px;
   }
 }
+/* ===== TPP VERSION LINK ===== */
+.tpp-link {
+  position: fixed;
+  bottom: 10px;
+  left: 15px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(0, 255, 255, 0.35);
+  border-radius: 20px;
+  text-decoration: none;
+  color: rgba(0, 255, 255, 0.7);
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  backdrop-filter: blur(8px);
+  transition: all 0.25s ease;
+  pointer-events: all;
+  white-space: nowrap;
+}
+
+.tpp-link i {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.tpp-link:hover {
+  color: var(--cyan);
+  border-color: var(--cyan);
+  background: rgba(0, 255, 255, 0.08);
+  box-shadow: 0 0 16px rgba(0, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.tpp-link:hover .tpp-link-text {
+  text-shadow: 0 0 8px var(--cyan);
+}
+
+/* pulse animation so it catches the eye */
+@keyframes tppPulse {
+  0%, 100% { border-color: rgba(0, 255, 255, 0.35); }
+  50%       { border-color: rgba(0, 255, 255, 0.7);
+              box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
+}
+
+.tpp-link {
+  animation: tppPulse 3s ease-in-out infinite;
+}
+
+.tpp-link:hover {
+  animation: none;
+}
+
+@media (max-width: 480px) {
+  .tpp-link {
+    font-size: 0.55rem;
+    padding: 6px 11px;
+    gap: 5px;
+    bottom: 8px;
+    left: 10px;
+  }
+}
